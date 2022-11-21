@@ -4,11 +4,11 @@
         "items": [
             {
                 "type": "heading",
-                "defaultValue": "TicToc+"
+                "defaultValue": "Turbo"
             },
             {
                 "type": "text",
-                "defaultValue": "By Nikki"
+                "defaultValue": "By Aero"
             }
         ]
     },
@@ -49,8 +49,8 @@
                         "value": "1"
                     },
                     {
-                        "label": "4",
-                        "value": "4"
+                        "label": "5",
+                        "value": "5"
                     },
                     {
                         "label": "12",
@@ -60,21 +60,21 @@
             },
             {
                 "type": "select",
-                "messageKey": "DotTypeKey",
-                "defaultValue": "2",
-                "label": "Style of Hour Ticks",
+                "messageKey": "SubDotNumKey",
+                "defaultValue": "4",
+                "label": "Number of Ticks within the Hour",
                 "options": [
                     {
-                        "label": "Dots",
-                        "value": "2"
-                    },
-                    {
-                        "label": "Lines",
-                        "value": "3"
-                    },
-                    {
-                        "label": "Short Lines",
+                        "label": "1",
                         "value": "1"
+                    },
+                    {
+                        "label": "4",
+                        "value": "4"
+                    },
+                    {
+                        "label": "12",
+                        "value": "12"
                     }
                 ]
             }
@@ -117,6 +117,33 @@
             },
             {
                 "type": "slider",
+                "messageKey": "SubHourTickSizeKey",
+                "defaultValue": "1",
+                "label": "Sub Hour Tick Size",
+                "min": "1",
+                "max": "4",
+                "step": "1"
+            },
+            {
+                "type": "slider",
+                "messageKey": "RedlineHourKey",
+                "defaultValue": "9000",
+                "label": "Redline Hour",
+                "min": "1000",
+                "max": "11000",
+                "step": "1"
+            },
+            {
+                "type": "slider",
+                "messageKey": "SubTickIndentationKey",
+                "defaultValue": "6",
+                "label": "Sub Tick indentation",
+                "min": "1",
+                "max": "10",
+                "step": "1"
+            },
+            {
+                "type": "slider",
                 "messageKey": "SecStartKey",
                 "defaultValue": "0",
                 "label": "Second Hand Start Hour",
@@ -128,7 +155,7 @@
             {
                 "type": "slider",
                 "messageKey": "SecEndKey",
-                "defaultValue": "24",
+                "defaultValue": "0",
                 "label": "Second Hand End Hour",
                 "min": "0",
                 "max": "24",
@@ -148,42 +175,42 @@
             {
                 "type": "color",
                 "includeGray": "true",
-                "defaultValue": "0xFFFFFF",
+                "defaultValue": "0xFF5500",
                 "messageKey": "HourColorKey",
                 "label": "Hour Hand Color"
             },
             {
                 "type": "color",
                 "includeGray": "true",
-                "defaultValue": "0xFFFFFF",
+                "defaultValue": "0xFF5500",
                 "messageKey": "MinColorKey",
                 "label": "Minute Hand Color"
             },
             {
                 "type": "color",
                 "includeGray": "true",
-                "defaultValue": "0xFF0000",
+                "defaultValue": "0x000000",
                 "messageKey": "DotColorKey",
                 "label": "Center Dot Color"
             },
             {
                 "type": "color",
                 "includeGray": "true",
-                "defaultValue": "0xFF0000",
+                "defaultValue": "0x000000",
                 "messageKey": "SecColorKey",
                 "label": "Second Hand Color"
             },
             {
                 "type": "color",
                 "includeGray": "true",
-                "defaultValue": "0xFF0000",
+                "defaultValue": "0xFFFFFF",
                 "messageKey": "DateColorKey",
                 "label": "Date Color"
             },
             {
                 "type": "color",
                 "includeGray": "true",
-                "defaultValue": "0xFFFFFF",
+                "defaultValue": "0x000000",
                 "messageKey": "TickColorKey",
                 "label": "Hour Tick Color"
             },
@@ -191,13 +218,27 @@
                 "type": "color",
                 "includeGray": "true",
                 "defaultValue": "0x000000",
+                "messageKey": "SubTickColorKey",
+                "label": "Sub Hour Tick Color"
+            },
+            {
+                "type": "color",
+                "includeGray": "true",
+                "defaultValue": "0xFF0000",
+                "messageKey": "RedlineColorKey",
+                "label": "Redline Color"
+            },
+            {
+                "type": "color",
+                "includeGray": "true",
+                "defaultValue": "0xFFFF00",
                 "messageKey": "BgColorKey",
                 "label": "Background Color"
             },
             {
                 "type": "color",
                 "includeGray": "true",
-                "defaultValue": "0xFFFFFF",
+                "defaultValue": "0x000000",
                 "messageKey": "PebbleColorKey",
                 "label": "Pebble Logo Color"
             }
@@ -219,9 +260,9 @@
             },
             {
                 "type": "select",
-                "defaultValue": "0",
+                "defaultValue": "1",
                 "messageKey": "FlagKey",
-                "label": "Pride Flag on Minute Hand",
+                "label": "Pride Flag on Minute Hand (Hacky)",
                 "capabilities": ["COLOR"],
                 "description": "(experimental)",
                 "options": [

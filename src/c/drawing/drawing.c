@@ -46,7 +46,7 @@ static void draw_hand(int length, int width, int rot, GColor color, GContext *ct
   graphics_draw_line(ctx, center, end_point);
 }
 
-static void draw_gay_hand(int length, int width, int rot, int segments, int colors[], GContext *ctx) {
+static void draw_multicolor_hand(int length, int width, int rot, int segments, int colors[], GContext *ctx) {
   GRect bounds = layer_get_unobstructed_bounds(window_get_root_layer(main_window));
   GPoint center = grect_center_point(&bounds);
 
@@ -68,40 +68,24 @@ static void draw_gay_hand(int length, int width, int rot, int segments, int colo
   }
 }
 
-static void draw_dot_bg(GContext *ctx) {
+static void draw_line_bg (GContext *ctx, int dist_from_center, int dist_from_outside) {
   GRect bounds = layer_get_unobstructed_bounds(window_get_root_layer(main_window));
   GPoint center = grect_center_point(&bounds);
 
-  graphics_context_set_fill_color(ctx, settings.hour_tick_color);
-    
-  int dist_from_center;
-  dist_from_center = if_quickview_else(68, 50, bounds);
-
   for(int i = 0; i < settings.num_of_dots; i++) {
 
-    int angle = TRIG_MAX_ANGLE * i / settings.num_of_dots;
-
-    GPoint dot = {
-      .x = center.x + sin_lookup(angle) * dist_from_center / TRIG_MAX_RATIO,
-      .y = center.y - cos_lookup(angle) * dist_from_center / TRIG_MAX_RATIO
-    };
-
-    graphics_fill_circle(ctx, dot, settings.hour_tick_size);
-  }
-}
-
-static void draw_line_bg (GContext *ctx, int dist_from_center) {
-  GRect bounds = layer_get_unobstructed_bounds(window_get_root_layer(main_window));
-  GPoint center = grect_center_point(&bounds);
-
-  graphics_context_set_stroke_color(ctx, settings.hour_tick_color);
-  graphics_context_set_stroke_width(ctx, settings.hour_tick_size * 2);
-
-  int second_dist = 100;
-
-  for(int i = 0; i < settings.num_of_dots; i++) {
+    graphics_context_set_stroke_width(ctx, settings.hour_tick_size * 2);
 
     int angle = TRIG_MAX_ANGLE * i / settings.num_of_dots;
+    int degree_angle = 360 * i / settings.num_of_dots;
+
+
+    if (degree_angle >= 360 / 12 * (settings.redline_hour/1000)) {
+      graphics_context_set_stroke_color(ctx, settings.redline_color);
+    }
+    else {
+      graphics_context_set_stroke_color(ctx, settings.hour_tick_color);
+    }
 
     GPoint point1 = {
       .x = center.x + sin_lookup(angle) * dist_from_center / TRIG_MAX_RATIO,
@@ -109,11 +93,40 @@ static void draw_line_bg (GContext *ctx, int dist_from_center) {
     };
 
     GPoint point2 = {
-      .x = center.x + sin_lookup(angle) * second_dist / TRIG_MAX_RATIO,
-      .y = center.y - cos_lookup(angle) * second_dist / TRIG_MAX_RATIO
+      .x = center.x + sin_lookup(angle) * dist_from_outside / TRIG_MAX_RATIO,
+      .y = center.y - cos_lookup(angle) * dist_from_outside / TRIG_MAX_RATIO
     };
 
     graphics_draw_line(ctx, point1, point2);
+
+
+    graphics_context_set_stroke_width(ctx, settings.sub_hour_tick_size * 2);
+
+    for(int i = 0; i < settings.num_of_sub_dots; i++) {
+
+      int sub_angle = angle + (TRIG_MAX_ANGLE / settings.num_of_dots /settings.num_of_sub_dots * i);
+      int degree_sub_angle = degree_angle + (360 / settings.num_of_dots /settings.num_of_sub_dots * i);
+
+      if ( degree_sub_angle >= 360 / 12 * (settings.redline_hour/1000)) {
+        graphics_context_set_stroke_color(ctx, settings.redline_color);
+      }
+      else {
+        graphics_context_set_stroke_color(ctx, settings.sub_hour_tick_color);
+      }
+
+      GPoint sub_point1 = {
+        .x = center.x + sin_lookup(sub_angle) * (dist_from_center + settings.sub_tick_indentation) / TRIG_MAX_RATIO,
+        .y = center.y - cos_lookup(sub_angle) * (dist_from_center + settings.sub_tick_indentation) / TRIG_MAX_RATIO
+      };
+
+      GPoint sub_point2 = {
+        .x = center.x + sin_lookup(sub_angle) * dist_from_outside / TRIG_MAX_RATIO,
+        .y = center.y - cos_lookup(sub_angle) * dist_from_outside / TRIG_MAX_RATIO
+      };
+
+      graphics_draw_line(ctx, sub_point1, sub_point2);
+
+    }
   }
 }
 
@@ -131,11 +144,12 @@ void hands_draw_update_proc(Layer *layer, GContext *ctx) {
   int m_length = if_quickview_else(55, 40, bounds);
   int h_length = if_quickview_else(38, 28, bounds);
 
+  graphics_context_set_fill_color(ctx, settings.dot_color);
+  graphics_fill_circle(ctx, GPoint(bounds.size.w / 2, bounds.size.h / 2), 10);
+
   draw_hand(m_length, settings.hand_width, min, gay_detect, ctx);
   draw_hand(h_length, settings.hand_width, hour, settings.hour_color, ctx);
 
-  graphics_context_set_fill_color(ctx, settings.dot_color);
-  graphics_fill_circle(ctx, GPoint(bounds.size.w / 2, bounds.size.h / 2), 4);
 }
 
 void draw_sec_update_proc(Layer *layer, GContext *ctx) {
@@ -153,24 +167,16 @@ void draw_hour_marks_update_proc(Layer *layer, GContext *ctx) {
   double x_scale = .9;
   double y_scale = .9;
 
-  if (settings.dot_type == 1) {
-    draw_line_bg(ctx, 20);
-    graphics_context_set_fill_color(ctx, settings.bg_color);
-    graphics_fill_rect(ctx, GRect(center.x - center.x * x_scale, center.y - center.y * y_scale, bounds.size.w * x_scale, bounds.size.h * y_scale), 0, GCornerNone);
-  } else if (settings.dot_type == 2) {
-    draw_dot_bg(ctx);
-  } else {
-    int cent_dist = if_quickview_else(70, 54, bounds);
-    draw_line_bg(ctx, PBL_IF_ROUND_ELSE(80, cent_dist));
-  }
+  int cent_dist = if_quickview_else(70, 54, bounds);
+  draw_line_bg(ctx, PBL_IF_ROUND_ELSE(75, cent_dist), PBL_IF_ROUND_ELSE(90,80));
 }
 
-void draw_gay_hand_update_proc(Layer *layer, GContext *ctx) {
+void draw_multicolor_hand_update_proc(Layer *layer, GContext *ctx) {
   GRect bounds = layer_get_unobstructed_bounds(window_get_root_layer(main_window));
   
   int gay_length = if_quickview_else(55, 40, bounds);
 
-  draw_gay_hand(gay_length, settings.hand_width, min, num_stripes[settings.flag], flag_colors[settings.flag], ctx);
+  draw_multicolor_hand(gay_length, settings.hand_width, min, num_stripes[settings.flag], flag_colors[settings.flag], ctx);
 
   graphics_context_set_fill_color(ctx, settings.dot_color);
   graphics_fill_circle(ctx, GPoint(bounds.size.w / 2, bounds.size.h / 2), 4);
@@ -182,7 +188,7 @@ void pebble_text_update_proc(Layer *layer, GContext *ctx) {
   int pebb_y_offset = if_quickview_else(40, 25, bounds);
 
   graphics_context_set_text_color(ctx, settings.pebble_color);
-  graphics_draw_text(ctx, "pebble", fonts_get_system_font(FONT_KEY_GOTHIC_14_BOLD), GRect(0, pebb_y_offset, bounds.size.w, 50), GTextOverflowModeTrailingEllipsis, GTextAlignmentCenter, 0);
+  graphics_draw_text(ctx, "turbo", fonts_get_system_font(FONT_KEY_GOTHIC_24), GRect(0, pebb_y_offset, bounds.size.w, 50), GTextOverflowModeTrailingEllipsis, GTextAlignmentCenter, 0);
 }
 
 void date_update_proc(Layer *layer, GContext *ctx) {
@@ -190,6 +196,12 @@ void date_update_proc(Layer *layer, GContext *ctx) {
 
   int square_quickview_offset = if_quickview_else(55, 70, bounds);
 
+  graphics_context_set_fill_color(ctx,settings.hour_tick_color);
+  int box_width = 35;
+  int box_height = 24;
+  //graphics_draw_round_rect(ctx,GRect((bounds.size.w/2) - (box_width/2), (bounds.size.h/2) + (box_height/2) + 9, box_width, box_height),5);
+  graphics_fill_rect(ctx,GRect((bounds.size.w/2) - (box_width/2), (bounds.size.h/2) + (box_height/2) + 9, box_width, box_height),6,GCornersAll);
+
   graphics_context_set_text_color(ctx, settings.date_color);
-  graphics_draw_text(ctx, date_char, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD), GRect(bounds.size.w - PBL_IF_ROUND_ELSE(70, square_quickview_offset), bounds.size.h / 2 - 12, 50, 20), GTextOverflowModeTrailingEllipsis, GTextAlignmentCenter, 0);
+  graphics_draw_text(ctx, date_char, fonts_get_system_font(FONT_KEY_LECO_20_BOLD_NUMBERS), GRect(bounds.size.w /2 - 24, bounds.size.h / 2 + 20, 50, 20), GTextOverflowModeTrailingEllipsis, GTextAlignmentCenter, 0);
 }

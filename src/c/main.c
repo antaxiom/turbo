@@ -86,7 +86,7 @@ static void main_window_load(Window *window) {
   layer_add_child(window_layer, clock_hands);
 
   gay_layer = layer_create(bounds);
-  layer_set_update_proc(gay_layer, draw_gay_hand_update_proc);
+  layer_set_update_proc(gay_layer, draw_multicolor_hand_update_proc);
   layer_add_child(window_layer, gay_layer);
 
   sec_hand = layer_create(bounds);

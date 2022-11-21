@@ -1,3 +1,5 @@
-# Tictoc+
+# Turbo
 
-A neat lil extension of the stock Pebble Time watchface TicToc, with more features and customization
+A watchface based off of classic car gauges, still in progress.
+
+Based off of Pheoniix's great Tictoc+

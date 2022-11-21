@@ -26,6 +26,11 @@ static void inbox_recieved_handler(DictionaryIterator *iter, void *ctx) {
         settings.num_of_dots = atoi(dotNum_t->value->cstring);
     }
 
+    Tuple *subDotNum_t = dict_find(iter, MESSAGE_KEY_SubDotNumKey);
+    if (subDotNum_t) {
+        settings.num_of_sub_dots = atoi(subDotNum_t->value->cstring);
+    }
+
     Tuple *h_color_t = dict_find(iter, MESSAGE_KEY_HourColorKey);
     if (h_color_t) {
         settings.hour_color = GColorFromHEX(h_color_t->value->int32);
@@ -51,13 +56,34 @@ static void inbox_recieved_handler(DictionaryIterator *iter, void *ctx) {
         settings.hour_tick_color = GColorFromHEX(tick_color_t->value->int32);
     }
 
+    Tuple *sub_tick_color_t = dict_find(iter, MESSAGE_KEY_SubTickColorKey);
+    if (sub_tick_color_t) {
+        settings.sub_hour_tick_color = GColorFromHEX(sub_tick_color_t->value->int32);
+    }
+
+    Tuple *redline_color_t = dict_find(iter, MESSAGE_KEY_RedlineColorKey);
+    if (redline_color_t) {
+        settings.redline_color = GColorFromHEX(redline_color_t->value->int32);
+    }
+
     Tuple *dot_size_t = dict_find(iter, MESSAGE_KEY_HourTickSizeKey);
     if (dot_size_t) {
         settings.hour_tick_size = dot_size_t->value->int32;
     }
-    Tuple *dot_type_t = dict_find(iter, MESSAGE_KEY_DotTypeKey);
-    if (dot_type_t) {
-        settings.dot_type = atoi(dot_type_t->value->cstring);
+
+    Tuple *sub_dot_size_t = dict_find(iter, MESSAGE_KEY_SubHourTickSizeKey);
+    if (sub_dot_size_t) {
+        settings.sub_hour_tick_size = sub_dot_size_t->value->int32;
+    }
+
+    Tuple *redline_hour_t = dict_find(iter, MESSAGE_KEY_RedlineHourKey);
+    if (redline_hour_t) {
+        settings.redline_hour = redline_hour_t->value->int32;
+    }
+
+    Tuple *sub_tick_identation_t = dict_find(iter, MESSAGE_KEY_SubTickIndentationKey);
+    if (sub_tick_identation_t) {
+        settings.sub_tick_indentation = sub_tick_identation_t->value->int32;
     }
 
     Tuple *flag_t = dict_find(iter, MESSAGE_KEY_FlagKey);
@@ -111,5 +137,6 @@ static void inbox_recieved_handler(DictionaryIterator *iter, void *ctx) {
 
 void init_msg() {
     app_message_register_inbox_received(inbox_recieved_handler);
+
     app_message_open(256, 256);
 }
