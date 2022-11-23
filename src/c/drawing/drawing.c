@@ -8,7 +8,6 @@ extern ClaySettings settings;
 int hour, min, sec, actual_hour;
 static char date_char[] = "DD";
 
-extern int *flag_colors[];
 extern int num_stripes[];
 
 int if_quickview_else(int if_no, int if_yes, GRect quick_view_bounds) {
@@ -36,36 +35,32 @@ static void draw_hand(int length, int width, int rot, GColor color, GContext *ct
   GRect bounds = layer_get_unobstructed_bounds(window_get_root_layer(main_window));
   GPoint center = grect_center_point(&bounds);
 
-  GPoint end_point = {
+  GPoint full_length = {
     .x = center.x + (sin_lookup(DEG_TO_TRIGANGLE(rot)) * length / TRIG_MAX_RATIO),
     .y = center.y - (cos_lookup(DEG_TO_TRIGANGLE(rot)) * length / TRIG_MAX_RATIO)
   };
 
+  GPoint center_offset = {
+    .x = center.x + (sin_lookup(DEG_TO_TRIGANGLE(rot)) * 5 / TRIG_MAX_RATIO),
+    .y = center.y - (cos_lookup(DEG_TO_TRIGANGLE(rot)) * 5 / TRIG_MAX_RATIO)
+  };
+
+  GPoint opposite_length = {
+    .x = center.x - (sin_lookup(DEG_TO_TRIGANGLE(rot)) * 12 / TRIG_MAX_RATIO),
+    .y = center.y + (cos_lookup(DEG_TO_TRIGANGLE(rot)) * 12 / TRIG_MAX_RATIO)
+  };
+
+  graphics_context_set_stroke_color(ctx, GColorBlack);
+  graphics_context_set_stroke_width(ctx, width+2);
+  graphics_draw_line(ctx, center, opposite_length);
+
+  graphics_context_set_stroke_color(ctx, GColorBlack);
+  graphics_context_set_stroke_width(ctx, width+2);
+  graphics_draw_line(ctx, center, full_length);
+
   graphics_context_set_stroke_color(ctx, color);
-  graphics_context_set_stroke_width(ctx, width);
-  graphics_draw_line(ctx, center, end_point);
-}
-
-static void draw_multicolor_hand(int length, int width, int rot, int segments, int colors[], GContext *ctx) {
-  GRect bounds = layer_get_unobstructed_bounds(window_get_root_layer(main_window));
-  GPoint center = grect_center_point(&bounds);
-
-  for (int i = 0; i < segments; i++) {
-    
-    GPoint point1 = {
-      .x = center.x + (sin_lookup(DEG_TO_TRIGANGLE(rot)) * length / segments * (i) / TRIG_MAX_RATIO),
-      .y = center.y - (cos_lookup(DEG_TO_TRIGANGLE(rot)) * length / segments * (i) / TRIG_MAX_RATIO),
-    };
-
-    GPoint point2 = {
-      .x = center.x + (sin_lookup(DEG_TO_TRIGANGLE(rot)) * length / segments * (i + 1) / TRIG_MAX_RATIO),
-      .y = center.y - (cos_lookup(DEG_TO_TRIGANGLE(rot)) * length / segments * (i + 1) / TRIG_MAX_RATIO)
-    };
-
-    graphics_context_set_stroke_color(ctx, GColorFromHEX(colors[i]));
-    graphics_context_set_stroke_width(ctx, width);
-    graphics_draw_line(ctx, point1, point2);
-  }
+  graphics_context_set_stroke_width(ctx, width-2);
+  graphics_draw_line(ctx, center_offset, full_length);
 }
 
 static void draw_line_bg (GContext *ctx, int dist_from_center, int dist_from_outside) {
@@ -132,22 +127,14 @@ static void draw_line_bg (GContext *ctx, int dist_from_center, int dist_from_out
 
 void hands_draw_update_proc(Layer *layer, GContext *ctx) {
   GRect bounds = layer_get_unobstructed_bounds(window_get_root_layer(main_window));
-  
-  GColor gay_detect;
 
-  if(settings.flag == 0) {
-    gay_detect = settings.min_color;
-  } else {
-    gay_detect = settings.bg_color;
-  }
-
-  int m_length = if_quickview_else(55, 40, bounds);
-  int h_length = if_quickview_else(38, 28, bounds);
+  int m_length = if_quickview_else(68, 53, bounds);
+  int h_length = if_quickview_else(45, 35, bounds);
 
   graphics_context_set_fill_color(ctx, settings.dot_color);
   graphics_fill_circle(ctx, GPoint(bounds.size.w / 2, bounds.size.h / 2), 10);
 
-  draw_hand(m_length, settings.hand_width, min, gay_detect, ctx);
+  draw_hand(m_length, settings.hand_width, min, settings.min_color, ctx);
   draw_hand(h_length, settings.hand_width, hour, settings.hour_color, ctx);
 
 }
@@ -168,18 +155,7 @@ void draw_hour_marks_update_proc(Layer *layer, GContext *ctx) {
   double y_scale = .9;
 
   int cent_dist = if_quickview_else(70, 54, bounds);
-  draw_line_bg(ctx, PBL_IF_ROUND_ELSE(75, cent_dist), PBL_IF_ROUND_ELSE(90,80));
-}
-
-void draw_multicolor_hand_update_proc(Layer *layer, GContext *ctx) {
-  GRect bounds = layer_get_unobstructed_bounds(window_get_root_layer(main_window));
-  
-  int gay_length = if_quickview_else(55, 40, bounds);
-
-  draw_multicolor_hand(gay_length, settings.hand_width, min, num_stripes[settings.flag], flag_colors[settings.flag], ctx);
-
-  graphics_context_set_fill_color(ctx, settings.dot_color);
-  graphics_fill_circle(ctx, GPoint(bounds.size.w / 2, bounds.size.h / 2), 4);
+  draw_line_bg(ctx, PBL_IF_ROUND_ELSE(78, cent_dist), PBL_IF_ROUND_ELSE(90,80));
 }
 
 void pebble_text_update_proc(Layer *layer, GContext *ctx) {
@@ -187,8 +163,10 @@ void pebble_text_update_proc(Layer *layer, GContext *ctx) {
 
   int pebb_y_offset = if_quickview_else(40, 25, bounds);
 
-  graphics_context_set_text_color(ctx, settings.pebble_color);
-  graphics_draw_text(ctx, "turbo", fonts_get_system_font(FONT_KEY_GOTHIC_24), GRect(0, pebb_y_offset, bounds.size.w, 50), GTextOverflowModeTrailingEllipsis, GTextAlignmentCenter, 0);
+  //graphics_context_set_text_color(ctx, settings.pebble_color);
+  //graphics_draw_text(ctx, "turbo", fonts_get_system_font(FONT_KEY_GOTHIC_24), GRect(0, pebb_y_offset, bounds.size.w, 50), GTextOverflowModeTrailingEllipsis, GTextAlignmentCenter, 0);
+
+  
 }
 
 void date_update_proc(Layer *layer, GContext *ctx) {

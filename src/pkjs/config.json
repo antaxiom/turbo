@@ -91,7 +91,7 @@
             {
                 "type": "slider",
                 "messageKey": "HandWidthKey",
-                "defaultValue": "4",
+                "defaultValue": "6",
                 "label": "Hour and Minute Hand Size",
                 "min": "2",
                 "max": "8",
@@ -130,8 +130,8 @@
                 "defaultValue": "9000",
                 "label": "Redline Hour",
                 "min": "1000",
-                "max": "11000",
-                "step": "1"
+                "max": "11500",
+                "step": "100"
             },
             {
                 "type": "slider",
@@ -257,48 +257,6 @@
                 "messageKey": "BtBuzzKey",
                 "defaultValue": "true",
                 "label": "Buzz on Disconnect"
-            },
-            {
-                "type": "select",
-                "defaultValue": "1",
-                "messageKey": "FlagKey",
-                "label": "Pride Flag on Minute Hand (Hacky)",
-                "capabilities": ["COLOR"],
-                "description": "(experimental)",
-                "options": [
-                    {
-                        "value": "0",
-                        "label": "None"
-                    },
-                    {
-                        "value": "1",
-                        "label": "Pride"
-                    },
-                    {
-                        "value": "2",
-                        "label": "Transgender"
-                    },
-                    {
-                        "value": "3",
-                        "label": "Bisexual"
-                    },
-                    {
-                        "value": "4",
-                        "label": "Lesbian"
-                    },
-                    {
-                        "value": "5",
-                        "label": "Pansexual"
-                    },
-                    {
-                        "value": "6",
-                        "label": "Asexual"
-                    },
-                    {
-                        "value": "7",
-                        "label": "Nonbinary"
-                    }
-                ]
             }
         ]
     },

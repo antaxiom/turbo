@@ -5,7 +5,9 @@
 #include "messaging/msg.h"
 
 Window *main_window;
-static Layer *clock_hands, *sec_hand, *bg_layer, *gay_layer, *pebb_layer, *date_layer;
+static Layer *clock_hands, *sec_hand, *bg_layer, *date_layer;
+static BitmapLayer *logo_layer;
+static GBitmap *turbo_logo;
 
 extern int actual_hour;
 
@@ -39,8 +41,6 @@ void update_stuff() {
   layer_mark_dirty(clock_hands);
   layer_mark_dirty(bg_layer);
   layer_mark_dirty(sec_hand);
-  layer_mark_dirty(gay_layer);
-  layer_mark_dirty(pebb_layer);
   layer_mark_dirty(date_layer);
 
   if(settings.sec_end == settings.sec_start) {
@@ -52,18 +52,15 @@ void update_stuff() {
   }
 
   layer_set_hidden(bg_layer, !settings.enable_bg);
-  if(settings.flag == 0) {
-    layer_set_hidden(gay_layer, true);
-  } else {
-    layer_set_hidden(gay_layer, false);
-  }
-  layer_set_hidden(pebb_layer, !settings.enable_pebble);
+  //layer_set_hidden(logo_layer, !settings.enable_pebble);
   layer_set_hidden(date_layer, !settings.enable_date);
 }
 
 static void main_window_load(Window *window) {
   Layer *window_layer = window_get_root_layer(window);
   GRect bounds = layer_get_bounds(window_layer);
+  GPoint center = grect_center_point(&bounds);
+  turbo_logo = gbitmap_create_with_resource(RESOURCE_ID_TURBO_LOGO);
 
   window_set_background_color(main_window, settings.bg_color);
   
@@ -73,9 +70,11 @@ static void main_window_load(Window *window) {
   layer_set_update_proc(bg_layer, draw_hour_marks_update_proc);
   layer_add_child(window_layer, bg_layer);
 
-  pebb_layer = layer_create(bounds);
-  layer_set_update_proc(pebb_layer, pebble_text_update_proc);
-  layer_add_child(window_layer, pebb_layer);
+  logo_layer = bitmap_layer_create(GRect(center.x-26,50,50,10));
+  bitmap_layer_set_compositing_mode(logo_layer, GCompOpSet);
+  bitmap_layer_set_bitmap(logo_layer, turbo_logo);
+  layer_add_child(window_layer, bitmap_layer_get_layer(logo_layer));
+  //layer_set_update_proc(logo_layer, pebble_text_update_proc);
 
   date_layer = layer_create(bounds);
   layer_set_update_proc(date_layer, date_update_proc);
@@ -85,10 +84,6 @@ static void main_window_load(Window *window) {
   layer_set_update_proc(clock_hands, hands_draw_update_proc);
   layer_add_child(window_layer, clock_hands);
 
-  gay_layer = layer_create(bounds);
-  layer_set_update_proc(gay_layer, draw_multicolor_hand_update_proc);
-  layer_add_child(window_layer, gay_layer);
-
   sec_hand = layer_create(bounds);
   layer_set_update_proc(sec_hand, draw_sec_update_proc);
   layer_add_child(window_layer, sec_hand);
@@ -96,6 +91,8 @@ static void main_window_load(Window *window) {
 
 static void main_window_unload() {
   layer_destroy(clock_hands);
+  gbitmap_destroy(turbo_logo);
+  bitmap_layer_destroy(logo_layer);
 }
 
 static void init() {

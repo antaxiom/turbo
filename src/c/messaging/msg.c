@@ -86,11 +86,6 @@ static void inbox_recieved_handler(DictionaryIterator *iter, void *ctx) {
         settings.sub_tick_indentation = sub_tick_identation_t->value->int32;
     }
 
-    Tuple *flag_t = dict_find(iter, MESSAGE_KEY_FlagKey);
-    if(flag_t) {
-        settings.flag = atoi(flag_t->value->cstring);
-    }
-
     Tuple *pebble_t = dict_find(iter, MESSAGE_KEY_PebbleBoolKey);
     if(pebble_t) {
         settings.enable_pebble = pebble_t->value->int32 == 1;

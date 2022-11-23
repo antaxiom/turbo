@@ -1,5 +1,5 @@
 {
-  "name": "Turbo",
+  "name": "turbo",
   "author": "Aero",
   "version": "0.1",
   "keywords": [
@@ -42,7 +42,6 @@
       "SubHourTickSizeKey",
       "SubTickIndentationKey",
       "RedlineHourKey",
-      "FlagKey",
       "PebbleBoolKey",
       "PebbleColorKey",
       "DateBoolKey",
@@ -57,7 +56,12 @@
           "menuIcon": "true",
           "type": "png",
           "name": "MENU_ICON",
-          "file": "tictocplus.png" 
+          "file": "icon.png" 
+        },
+        {
+          "type": "bitmap",
+          "name": "TURBO_LOGO",
+          "file": "turbo-logo.png"
         }
       ]
     }

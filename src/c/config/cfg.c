@@ -22,7 +22,6 @@ static void default_settings() {
     settings.hour_tick_size = 2;
     settings.sub_hour_tick_size = 1;
     settings.redline_hour = 9000;
-    settings.flag = 1;
     settings.pebble_color = GColorBlack;
     settings.enable_pebble = true;
     settings.date_color = GColorWhite;
