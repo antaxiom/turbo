@@ -70,7 +70,7 @@ static void main_window_load(Window *window) {
   layer_set_update_proc(bg_layer, draw_hour_marks_update_proc);
   layer_add_child(window_layer, bg_layer);
 
-  logo_layer = bitmap_layer_create(GRect(center.x-26,50,50,10));
+  logo_layer = bitmap_layer_create(GRect(center.x-30,60,59,10));
   bitmap_layer_set_compositing_mode(logo_layer, GCompOpSet);
   bitmap_layer_set_bitmap(logo_layer, turbo_logo);
   layer_add_child(window_layer, bitmap_layer_get_layer(logo_layer));

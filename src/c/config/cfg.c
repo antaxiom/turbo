@@ -5,7 +5,7 @@
 extern ClaySettings settings;
 
 static void default_settings() {
-    settings.hand_width = 6;
+    settings.hand_width = 5;
     settings.second_width = 3;
     settings.hour_color = GColorOrange;
     settings.min_color = GColorOrange;
@@ -18,7 +18,7 @@ static void default_settings() {
     settings.enable_bg = true;
     settings.num_of_dots = 12;
     settings.num_of_sub_dots = 5;
-    settings.sub_tick_indentation = 6;
+    settings.sub_tick_indentation = 7;
     settings.hour_tick_size = 2;
     settings.sub_hour_tick_size = 1;
     settings.redline_hour = 9000;

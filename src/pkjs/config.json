@@ -45,12 +45,16 @@
                 "label": "Number of Hour Ticks",
                 "options": [
                     {
+                        "label": "0",
+                        "value": "0"
+                    },
+                    {
                         "label": "1",
                         "value": "1"
                     },
                     {
-                        "label": "5",
-                        "value": "5"
+                        "label": "4",
+                        "value": "4"
                     },
                     {
                         "label": "12",
@@ -65,16 +69,16 @@
                 "label": "Number of Ticks within the Hour",
                 "options": [
                     {
+                        "label": "0",
+                        "value": "0"
+                    },
+                    {
                         "label": "1",
-                        "value": "1"
+                        "value": "2"
                     },
                     {
                         "label": "4",
-                        "value": "4"
-                    },
-                    {
-                        "label": "12",
-                        "value": "12"
+                        "value": "5"
                     }
                 ]
             }
@@ -91,7 +95,7 @@
             {
                 "type": "slider",
                 "messageKey": "HandWidthKey",
-                "defaultValue": "6",
+                "defaultValue": "5",
                 "label": "Hour and Minute Hand Size",
                 "min": "2",
                 "max": "8",
@@ -136,7 +140,7 @@
             {
                 "type": "slider",
                 "messageKey": "SubTickIndentationKey",
-                "defaultValue": "6",
+                "defaultValue": "7",
                 "label": "Sub Tick indentation",
                 "min": "1",
                 "max": "10",
